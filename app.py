@@ -61,6 +61,18 @@ MERGED['total_pts'] = MERGED[['score_home','score_vis']].sum(axis=1)
 # compute point differential
 MERGED['pts_diff'] = np.abs(MERGED['score_home'] - MERGED['score_vis'])
 
+#Weather: Categorizing
+MERGED.loc[MERGED['weather'].str.contains('Sunny|Clear|fair|beautiful|nice', case = False)==True,'weather'] = 'Clear'
+MERGED.loc[MERGED['weather'].str.contains('Cloudy|cldy|clouds|foggy|overcast|Haze', case = False)==True,'weather'] = 'Cloudy'
+MERGED.loc[MERGED['weather'].str.contains('Rain|Showers|storms|scattered', case = False)==True,'weather'] = 'Rain'
+MERGED.loc[MERGED['weather'].str.contains('Roof Closed|indoors|indoor|dome', case = False)==True,'weather'] = 'Indoors'
+MERGED.loc[MERGED['weather'].str.contains('Humidity|Humid|Hot|Warm|Muggy', case = False)==True,'weather'] = 'Hot'
+MERGED.loc[MERGED['weather'].str.contains('Cool', case = False)==True,'weather'] = 'Cold'
+MERGED['weather'] = MERGED['weather'].replace({np.nan:'Unknown'})
+MERGED['weather'] = MERGED['weather'].replace({'':'Unknown'})
+
+MERGED['weather'].unique()
+
 # initialize app
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
               meta_tags=[
