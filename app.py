@@ -5,6 +5,7 @@ import plotly.express as px
 import pandas as pd
 import dash_bootstrap_components as dbc
 import datetime
+from PIL import Image
 
 def draw_graph(id,*args, **kwargs):
     html.Div([
@@ -25,6 +26,7 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
               )
 
 app.layout = html.Div([
+    html.Img(src = Image.open('SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
     dbc.Card(
         dbc.CardBody([
             dbc.Row([
