@@ -152,7 +152,7 @@ app.layout = html.Div([
                         dbc.Card(
                             dbc.CardBody([
                                 html.Div([
-                                    html.H2('Best Branded Teams: ')
+                                    html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
                                 ], style={'textAlign': 'center'}),
                                 # html.Div([
                                 #     dcc.Dropdown(
