@@ -158,17 +158,21 @@ app.layout = html.Div([
 
 
 @app.callback(
-    [Output('viewership','figure'),
-     Output('attendance','figure'),
-     Output('relationship','figure'),
-     Output('placeholder1','children'),
-     Output('placeholder2','children'),
-     Output('placeholder3','children'),
-     Output('placeholder4','children')],
+    Output('viewership','figure'),
+#      Output('attendance','figure'),
+#      Output('relationship','figure'),
+#      Output('placeholder1','children'),
+#      Output('placeholder2','children'),
+#      Output('placeholder3','children'),
+#      Output('placeholder4','children')],
     Input('input','value')
 )
 def update_graph(value):
-    pass
+    team = 'Tennessee'
+    fig = go.Figure(
+            data=go.Bar(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
+                        y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['Percent_of_Capacity']))
+    return fig
 
 
 if __name__ == '__main__':
