@@ -152,13 +152,13 @@ app.layout = html.Div([
                         dbc.Card(
                             dbc.CardBody([
                                 html.Div([
-                                    html.H2('Select a Team')
+                                    html.H2('Best Branded Teams: ')
                                 ], style={'textAlign': 'center'}),
-                                html.Div([
-                                    dcc.Dropdown(
-                                        id = "input"
-                                        ),
-                                    ], style={'textAlign': 'center'}) 
+                                # html.Div([
+                                #     dcc.Dropdown(
+                                #         id = "input"
+                                #         ),
+                                #     ], style={'textAlign': 'center'}) 
                                 ])
                             ),])
                 ], width=3),
@@ -166,9 +166,9 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
-                                    html.Img(src = Image.open('logos\UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-                                    html.H1(id='placeholder2'),
+                                    html.H4('Avg Viewers: '), #id='placeholder2'),
                                     ], style={'textAlign': 'center'})
                                 ])
                         ),])
@@ -177,8 +177,9 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
-                                    html.H1(id='placeholder3'),
+                                    html.H4('Avg Ratings: ' ), #id='placeholder3'),
                                     ], style={'textAlign': 'center'})
                                 ])
                             ),
@@ -188,8 +189,9 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
-                                    html.H2(id='placeholder4'),
+                                    html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
                                     ], style={'textAlign': 'center'})
                                 ])
                             ),
