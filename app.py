@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
 
-
+# Function to create graphs
 def draw_graph(id,*args, **kwargs):
     return html.Div([
         dbc.Card(
@@ -97,6 +97,7 @@ df = pd.DataFrame(d)
 # sort the data frame by team name
 df.sort_values('Team',inplace=True)
 
+# Define some figures
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
             line_dash='dot',
@@ -143,9 +144,13 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
                   ]
               )
 
+# layout
 app.layout = html.Div([
+    # sec logo and slogan
     html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
+    
+    # create row of cards with best branded teams
     dbc.Card(
         dbc.CardBody([
             dbc.Row([
@@ -202,6 +207,8 @@ app.layout = html.Div([
                 
             ], align='center'), 
             html.Br(),
+            
+            # graphs with average stadium capacity and viewership per team
             dbc.Row([
                 dbc.Col([
                     draw_graph(id='viewership',figure=viewership) 
