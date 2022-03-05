@@ -97,7 +97,7 @@ df = pd.DataFrame(d)
 # sort the data frame by team name
 df.sort_values('Team',inplace=True)
 
-# Define some figures
+# Define figures with average stats per team
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
             line_dash='dot',
@@ -158,6 +158,7 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                # header for best branded teams
                                 html.Div([
                                     html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
                                 ], style={'textAlign': 'center'}),
@@ -173,6 +174,7 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                # best branded team by viewers
                                 html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
                                     html.H4('Avg Viewers: '), #id='placeholder2'),
@@ -184,6 +186,7 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                # best branded team by ratings
                                 html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
                                     html.H4('Avg Ratings: ' ), #id='placeholder3'),
@@ -196,6 +199,7 @@ app.layout = html.Div([
                     html.Div([
                         dbc.Card(
                             dbc.CardBody([
+                                # best branded team by %capacity
                                 html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                 html.Div([
                                     html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
