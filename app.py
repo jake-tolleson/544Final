@@ -103,7 +103,7 @@ viewership.add_hline(df['AvgViews'].mean(),
             annotation_text="Average: "+str("{:,}".format(np.int64(df['AvgViews'].mean()))), 
             annotation_position="top right",
             annotation_font_size=12,
-            annotation_font_color="black")
+            annotation_font_color="red")
 viewership.update_layout(title={
             'text':"Average TV Views Per Game by School",
             'y':0.9,
@@ -113,6 +113,7 @@ viewership.update_layout(title={
         title_font_color="black",
         xaxis_title="School",
         yaxis_title="Number of Views")
+viewership.update_traces(marker_color='navy')
 viewership.layout.template = 'plotly_white'
 
 
@@ -122,7 +123,8 @@ attendance.add_hline(df['Avgattend'].mean(),
             annotation_text="Average: "+str(np.round(df['Avgattend'].mean(),2)), 
             annotation_position="top right",
             annotation_font_size=12,
-            annotation_font_color="black")
+            annotation_font_color="red")
+attendance.update_traces(marker_color='navy')
 attendance.update_layout(title={
             'text':"Average Percent of Capacity Per Game by School",
             'y':0.9,
