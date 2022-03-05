@@ -81,7 +81,7 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
               )
 
 app.layout = html.Div([
-    html.Img(src = Image.open('SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+    html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
     dbc.Card(
         dbc.CardBody([
