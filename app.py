@@ -211,7 +211,7 @@ summed_ranks = go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['VIEW
 
 summed_ranks.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
 summed_ranks.update_yaxes(title_text = 'Viewers per Game')
-summed_ranks.update_layout(title_text='Viewers per Game Associated with Summed Ranks')
+summed_ranks.update_layout(title_text='Viewership by Matchup Weight')
 summed_ranks.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
@@ -258,7 +258,7 @@ networks.add_layout_image(
 networks.update_layout(template="plotly_white")
 networks.update_xaxes( title_text = 'Network')
 networks.update_yaxes(title_text = 'Summed Rank')
-networks.update_layout(title_text='Summed Rank of Teams per Game, per Network')
+networks.update_layout(title_text='Weighted Matchup Distribution by Network')
 
 # Figure for ranks of single teams
 ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
@@ -283,7 +283,7 @@ ranks_views.add_layout_image(
 ranks_views.update_layout(template="plotly_white")
 ranks_views.update_xaxes( title_text = 'Ranking')
 ranks_views.update_yaxes(title_text = 'Views')
-ranks_views.update_layout(title_text='Views Associated with Ranks of Single Teams')
+ranks_views.update_layout(title_text='Viewership by Ranking')
 
 
 
@@ -342,22 +342,6 @@ def render_content(tab):
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
-                                        # header for best branded teams
-                                        html.Div([
-                                            html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
-                                        ], style={'textAlign': 'center'}),
-                                        # html.Div([
-                                        #     dcc.Dropdown(
-                                        #         id = "input"
-                                        #         ),
-                                        #     ], style={'textAlign': 'center'}) 
-                                        ])
-                                    ),])
-                        ], width=3),
-                        dbc.Col([
-                            html.Div([
-                                dbc.Card(
-                                    dbc.CardBody([
                                         # best branded team by viewers
                                         html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
@@ -365,7 +349,7 @@ def render_content(tab):
                                             ], style={'textAlign': 'center'})
                                         ])
                                 ),])
-                        ], width=3),
+                        ], width=4),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
@@ -378,7 +362,7 @@ def render_content(tab):
                                         ])
                                     ),
                                 ]) 
-                        ], width=3),
+                        ], width=4),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
@@ -391,8 +375,7 @@ def render_content(tab):
                                         ])
                                     ),
                                 ]) 
-                        ], width=3),
-                        
+                        ], width=4),
                     ], align='center'), 
                     html.Br(),
                     
@@ -421,23 +404,12 @@ def render_content(tab):
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
-                                        # header for best branded teams
-                                        html.Div([
-                                            html.H2('Select Teams for Branding Comparison: ')
-                                        ], style={'textAlign': 'center'}), 
-                                    ])
-                                ),])
-                        ], width=3),
-                        dbc.Col([
-                            html.Div([
-                                dbc.Card(
-                                    dbc.CardBody([
                                         # choose 1st team to compare
                                         html.Img(src = Image.open('logos/SEC.png'), 
                                                  style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
                                             html.Div([
-                                                html.H4('Choose a team: ' ),
+                                                html.H4('Choose A Team: ' ),
                                                 dcc.Dropdown(options = team_names_dict, 
                                                              value = 'Tennessee',
                                                              id = "dropdown1"
@@ -446,7 +418,7 @@ def render_content(tab):
                                             ])
                                         ])
                                 ),])
-                        ], width=3),
+                        ], width=6),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
@@ -455,7 +427,7 @@ def render_content(tab):
                                         html.Img(src = Image.open('logos/SEC.png'), 
                                                  style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Choose another team: ' ),
+                                            html.H4('Choose A Team: ' ),
                                             dcc.Dropdown(options = team_names_dict, 
                                                          value = 'Alabama',
                                                          id = "dropdown2"
@@ -464,23 +436,7 @@ def render_content(tab):
                                         ])
                                     ),
                                 ]) 
-                        ], width=3),
-
-#                         dbc.Col([
-#                             html.Div([
-#                                 dbc.Card(
-#                                     dbc.CardBody([
-#                                         # best branded team by %capacity
-#                                         html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-#                                         html.Div([
-#                                             html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
-#                                             ], style={'textAlign': 'center'})
-#                                         ])
-#                                     ),
-#                                 ]) 
-#                         ], width=3),
-
-                        
+                        ], width=6),
                     ], align='center'), 
                     html.Br(),
                     
@@ -509,31 +465,15 @@ def render_content(tab):
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
-                                        # header for best branded teams
-                                        html.Div([
-                                            html.H2('Factors Potentially Affecting Viewership: ')
-                                        ], style={'textAlign': 'center'}),
-                                        # html.Div([
-                                        #     dcc.Dropdown(
-                                        #         id = "input"
-                                        #         ),
-                                        #     ], style={'textAlign': 'center'}) 
-                                        ])
-                                    ),])
-                        ], width=3),
-                        dbc.Col([
-                            html.Div([
-                                dbc.Card(
-                                    dbc.CardBody([
                                         # best branded team by viewers
                                         html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Summed Ranks of Playing Teams'), #id='placeholder2'),
-                                            html.H6('*Outside Top 25 --> 26 = Rank')
+                                            html.H4('Weighted Rank of Matchup'), #id='placeholder2'),
+                                            html.H6('*Teams Outside the Top 25: Ranking = 26')
                                             ], style={'textAlign': 'center'})
                                         ])
                                 ),])
-                        ], width=3),
+                        ], width=4),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
@@ -541,12 +481,12 @@ def render_content(tab):
                                         # best branded team by ratings
                                         html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Networks' ), #id='placeholder3'),
+                                            html.H4('TV Network Comparison' ), #id='placeholder3'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
                                 ]) 
-                        ], width=3),
+                        ], width=4),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
@@ -554,13 +494,13 @@ def render_content(tab):
                                         # best branded team by %capacity
                                         html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Ranks of Single Teams'), #id='placeholder4'),
-                                            html.H6('*Outside Top 25 --> 26 = Rank')
+                                            html.H4('Individual Team Rankings'), #id='placeholder4'),
+                                            html.H6('*Teams Outside the Top 25: Ranking = 26')
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
                                 ]) 
-                        ], width=3),
+                        ], width=4),
                         
                     ], align='center'), 
                     html.Br(),
@@ -581,23 +521,6 @@ def render_content(tab):
                 ]), color = 'light'
             )
         ])
-
-
-
-
-
-# @app.callback(
-#     [Output('viewership','figure'),
-#      Output('attendance','figure'),
-#      Output('relationship','figure'),
-#      Output('placeholder1','children'),
-#      Output('placeholder2','children'),
-#      Output('placeholder3','children'),
-#      Output('placeholder4','children')],
-#     Input('input','value')
-# )
-# def update_graph(value):
-#     pass
 
 @app.callback(
     Output('time-series1','figure'),
