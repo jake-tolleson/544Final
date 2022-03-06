@@ -8,6 +8,7 @@ import datetime
 from PIL import Image
 import layouts
 import plotly.graph_objects as go 
+from plotly.subplots import make_subplots
 #from layouts import Page1Layout, Page2Layout
 
 # Function to create graphs
@@ -375,10 +376,12 @@ def render_content(tab):
                     # time series of viewership for both teams
                     dbc.Row([
                         dbc.Col([
-                            dcc.Graph(id = 'time-series1') 
+                            dcc.Graph(id = 'time-series1'),
+                            dcc.Graph(id = 'time-series3') 
                         ], width=6),
                         dbc.Col([
-                            dcc.Graph(id = 'time-series2')
+                            dcc.Graph(id = 'time-series2'),
+                            dcc.Graph(id = 'time-series4')
                         ], width=6),
                     ], align='center'), 
                     html.Br(),     
@@ -482,14 +485,16 @@ def render_content(tab):
 
 @app.callback(
     Output('time-series1','figure'),
+    Output('time-series3', 'figure'),
     Input('dropdown1','value')
 )
 def update_graph(team1):
     fig1 = go.Figure(
-            data=go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
-                            y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
+            go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
+                        y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
                             #markers = dict(color='navy')
                             ))
+    
     fig1.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
     fig1.update_yaxes(title_text = 'Percent Capacity')
     fig1.update_layout(title_text='Percent Capacity per Game')
@@ -511,11 +516,40 @@ def update_graph(team1):
             layer="below")
         )
     fig1.update_layout(template="plotly_white") 
-    return fig1
+    
+    fig3 = go.Figure(
+        go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
+                    y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['VIEWERS']
+                        #markers = dict(color='navy')
+                        ))
+    
+    fig3.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig3.update_yaxes(title_text = 'Number of Viewers')
+    fig3.update_layout(title_text='Viewership per Game')
+    fig3.update_yaxes(range=[0 ,15000000])
+    
+    # get logo in background of graph
+    image = choose_logo(team1) 
+    fig3.add_layout_image(
+        dict(
+            source= Image.open(image),
+            xref="x",
+            yref="y",
+            x=0,
+            y=15000000,
+            sizex=45,
+            sizey=15000000,
+            sizing = 'stretch',
+            opacity=0.3,
+            layer="below")
+        )
+    fig3.update_layout(template="plotly_white") 
+    return fig1, fig3
 
 
 @app.callback(
     Output('time-series2','figure'),
+    Output('time-series4', 'figure'),
     Input('dropdown2','value')
 )
 def update_graph(team2):
@@ -545,7 +579,35 @@ def update_graph(team2):
             layer="below")
         )
     fig2.update_layout(template="plotly_white") 
-    return fig2
+    
+    fig4 = go.Figure(
+    go.Scatter(x=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['date'],
+                y=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['VIEWERS']
+                    #markers = dict(color='navy')
+                    ))
+    
+    fig4.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig4.update_yaxes(title_text = 'Number of Viewers')
+    fig4.update_layout(title_text='Viewership per Game')
+    fig4.update_yaxes(range=[0 ,15000000])
+    
+    # get logo in background of graph
+    image = choose_logo(team2) 
+    fig4.add_layout_image(
+        dict(
+            source= Image.open(image),
+            xref="x",
+            yref="y",
+            x=0,
+            y=15000000,
+            sizex=45,
+            sizey=15000000,
+            sizing = 'stretch',
+            opacity=0.3,
+            layer="below")
+        )
+    fig4.update_layout(template="plotly_white") 
+    return fig2, fig4
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
