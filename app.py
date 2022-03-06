@@ -400,7 +400,7 @@ def render_content(tab):
                                     dbc.CardBody([
                                         # header for best branded teams
                                         html.Div([
-                                            html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
+                                            html.H2('Factors Potentially Affecting Viewership: ')
                                         ], style={'textAlign': 'center'}),
                                         # html.Div([
                                         #     dcc.Dropdown(
@@ -415,9 +415,10 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by viewers
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Viewers: '), #id='placeholder2'),
+                                            html.H4('Summed Ranks of Playing Teams'), #id='placeholder2'),
+                                            html.H6('*Outside Top 25 --> 26 = Rank')
                                             ], style={'textAlign': 'center'})
                                         ])
                                 ),])
@@ -427,9 +428,9 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by ratings
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Ratings: ' ), #id='placeholder3'),
+                                            html.H4('Ranks of Single Teams' ), #id='placeholder3'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
@@ -440,9 +441,9 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by %capacity
-                                        html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
+                                            html.H4('Networks'), #id='placeholder4'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
@@ -489,6 +490,7 @@ def render_content(tab):
     Input('dropdown1','value')
 )
 def update_graph(team1):
+    # time series of percent capacity
     fig1 = go.Figure(
             go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
                         y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
@@ -517,6 +519,7 @@ def update_graph(team1):
         )
     fig1.update_layout(template="plotly_white") 
     
+    # time series of viewers
     fig3 = go.Figure(
         go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
                     y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['VIEWERS']
