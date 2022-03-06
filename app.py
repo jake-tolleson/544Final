@@ -6,6 +6,8 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
+import layouts
+#from layouts import Page1Layout, Page2Layout
 
 # Function to create graphs
 def draw_graph(id,*args, **kwargs):
@@ -146,84 +148,86 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
 
 # layout
 app.layout = html.Div([
-    # sec logo and slogan
-    html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-    html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
+    layouts.Page1Layout,
+    layouts.Page2Layout
+#     # sec logo and slogan
+#     html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+#     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
     
-    # create row of cards with best branded teams
-    dbc.Card(
-        dbc.CardBody([
-            dbc.Row([
-                dbc.Col([
-                    html.Div([
-                        dbc.Card(
-                            dbc.CardBody([
-                                # header for best branded teams
-                                html.Div([
-                                    html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
-                                ], style={'textAlign': 'center'}),
-                                # html.Div([
-                                #     dcc.Dropdown(
-                                #         id = "input"
-                                #         ),
-                                #     ], style={'textAlign': 'center'}) 
-                                ])
-                            ),])
-                ], width=3),
-                dbc.Col([
-                    html.Div([
-                        dbc.Card(
-                            dbc.CardBody([
-                                # best branded team by viewers
-                                html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-                                html.Div([
-                                    html.H4('Avg Viewers: '), #id='placeholder2'),
-                                    ], style={'textAlign': 'center'})
-                                ])
-                        ),])
-                ], width=3),
-                dbc.Col([
-                    html.Div([
-                        dbc.Card(
-                            dbc.CardBody([
-                                # best branded team by ratings
-                                html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-                                html.Div([
-                                    html.H4('Avg Ratings: ' ), #id='placeholder3'),
-                                    ], style={'textAlign': 'center'})
-                                ])
-                            ),
-                        ]) 
-                ], width=3),
-                dbc.Col([
-                    html.Div([
-                        dbc.Card(
-                            dbc.CardBody([
-                                # best branded team by %capacity
-                                html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-                                html.Div([
-                                    html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
-                                    ], style={'textAlign': 'center'})
-                                ])
-                            ),
-                        ]) 
-                ], width=3),
+#     # create row of cards with best branded teams
+#     dbc.Card(
+#         dbc.CardBody([
+#             dbc.Row([
+#                 dbc.Col([
+#                     html.Div([
+#                         dbc.Card(
+#                             dbc.CardBody([
+#                                 # header for best branded teams
+#                                 html.Div([
+#                                     html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
+#                                 ], style={'textAlign': 'center'}),
+#                                 # html.Div([
+#                                 #     dcc.Dropdown(
+#                                 #         id = "input"
+#                                 #         ),
+#                                 #     ], style={'textAlign': 'center'}) 
+#                                 ])
+#                             ),])
+#                 ], width=3),
+#                 dbc.Col([
+#                     html.Div([
+#                         dbc.Card(
+#                             dbc.CardBody([
+#                                 # best branded team by viewers
+#                                 html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+#                                 html.Div([
+#                                     html.H4('Avg Viewers: '), #id='placeholder2'),
+#                                     ], style={'textAlign': 'center'})
+#                                 ])
+#                         ),])
+#                 ], width=3),
+#                 dbc.Col([
+#                     html.Div([
+#                         dbc.Card(
+#                             dbc.CardBody([
+#                                 # best branded team by ratings
+#                                 html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+#                                 html.Div([
+#                                     html.H4('Avg Ratings: ' ), #id='placeholder3'),
+#                                     ], style={'textAlign': 'center'})
+#                                 ])
+#                             ),
+#                         ]) 
+#                 ], width=3),
+#                 dbc.Col([
+#                     html.Div([
+#                         dbc.Card(
+#                             dbc.CardBody([
+#                                 # best branded team by %capacity
+#                                 html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+#                                 html.Div([
+#                                     html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
+#                                     ], style={'textAlign': 'center'})
+#                                 ])
+#                             ),
+#                         ]) 
+#                 ], width=3),
                 
-            ], align='center'), 
-            html.Br(),
+#             ], align='center'), 
+#             html.Br(),
             
-            # graphs with average stadium capacity and viewership per team
-            dbc.Row([
-                dbc.Col([
-                    draw_graph(id='viewership',figure=viewership) 
-                ], width=6),
-                dbc.Col([
-                    draw_graph(id='attendance',figure=attendance)
-                ], width=6),
-            ], align='center'), 
-            html.Br(),     
-        ]), color = 'light'
-    )
+#             # graphs with average stadium capacity and viewership per team
+#             dbc.Row([
+#                 dbc.Col([
+#                     draw_graph(id='viewership',figure=viewership) 
+#                 ], width=6),
+#                 dbc.Col([
+#                     draw_graph(id='attendance',figure=attendance)
+#                 ], width=6),
+#             ], align='center'), 
+#             html.Br(),     
+#         ]), color = 'light'
+#     )
 ])
 
 
@@ -240,6 +244,17 @@ app.layout = html.Div([
 # )
 # def update_graph(value):
 #     pass
+
+# @app.callback(
+#     Output('time-series','figure'),
+#     Input('dropdown','value')
+# )
+# def update_graph(value):
+#     fig = go.Figure(
+#             data=go.Scatter(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
+#                             y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)['Percent_of_Capacity'],
+#                             markers = True))
+#     return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
