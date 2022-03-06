@@ -6,7 +6,6 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
-import layouts
 import plotly.graph_objects as go 
 from plotly.subplots import make_subplots
 #from layouts import Page1Layout, Page2Layout
@@ -291,7 +290,7 @@ ranks_views.update_layout(title_text='Viewership by Ranking')
 team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'Alabama', 'value': 'Alabama'},
                    {'label': 'Missouri', 'value': 'Missouri'},
-                   {'label': 'Mississippi (Ole Miss)', 'value': 'Mississippi (Ole Miss)'},
+                   {'label': 'Ole Miss', 'value': 'Mississippi (Ole Miss)'},
                    {'label': 'Mississippi State', 'value': 'Mississippi State'},
                    {'label': 'Florida', 'value': 'Florida'},
                    {'label': 'Tennessee', 'value': 'Tennessee'},
