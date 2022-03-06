@@ -6,6 +6,8 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
+import layouts
+#from layouts import Page1Layout, Page2Layout
 
 # Function to create graphs
 def draw_graph(id,*args, **kwargs):
@@ -137,6 +139,22 @@ attendance.update_layout(title={
         yaxis_title="Percent of Capacity")
 attendance.layout.template = 'plotly_white'
 
+# Creating an object for "options" in the dropdown menu.
+team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
+                   {'label': 'Alabama', 'value': 'Alabama'},
+                   {'label': 'Missouri', 'value': 'Missouri'},
+                   {'label': 'Mississippi (Ole Miss)', 'value': 'Mississippi (Ole Miss)'},
+                   {'label': 'Mississippi State', 'value': 'Mississippi State'},
+                   {'label': 'Florida', 'value': 'Florida'},
+                   {'label': 'Tennessee', 'value': 'Tennessee'},
+                   {'label': 'LSU', 'value': 'LSU'},
+                   {'label': 'Texas A&M', 'value': 'Texas A&M'},
+                   {'label': 'Kentucky', 'value': 'Kentucky'},
+                   {'label': 'Auburn', 'value': 'Auburn'},
+                   {'label': 'Vanderbilt', 'value': 'Vanderbilt'},
+                   {'label': 'Arkansas', 'value': 'Arkansas'},
+                   {'label': 'South Carolina', 'value': 'South Carolina'}]
+
 # initialize app
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
               meta_tags=[
@@ -146,6 +164,7 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
 
 # layout
 app.layout = html.Div([
+
         # sec logo and slogan
     html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
@@ -155,6 +174,8 @@ app.layout = html.Div([
         dcc.Tab(label='Factors Associated with Good Branding', value='tab-3')
     ]),
     html.Div(id='tabs-content-example-graph')
+
+
 ])
 @app.callback(Output('tabs-content-example-graph', 'children'),
               Input('tabs-example-graph', 'value'))
@@ -248,25 +269,27 @@ def render_content(tab):
                                     dbc.CardBody([
                                         # header for best branded teams
                                         html.Div([
-                                            html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
-                                        ], style={'textAlign': 'center'}),
-                                        # html.Div([
-                                        #     dcc.Dropdown(
-                                        #         id = "input"
-                                        #         ),
-                                        #     ], style={'textAlign': 'center'}) 
-                                        ])
-                                    ),])
+                                            html.H2('Select Teams for Branding Comparison: ')
+                                        ], style={'textAlign': 'center'}), 
+                                    ])
+                                ),])
                         ], width=3),
                         dbc.Col([
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by viewers
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), 
+                                                 style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Viewers: '), #id='placeholder2'),
-                                            ], style={'textAlign': 'center'})
+                                            html.Div([
+                                                html.H4('Choose a team: ' ),
+                                                dcc.Dropdown(options = team_names_dict, 
+                                                             value = ['Tennessee'],
+                                                             id = "dropdown1"
+                                                    ),
+                                                ], style={'textAlign': 'center'})
+                                            ])
                                         ])
                                 ),])
                         ], width=3),
@@ -275,27 +298,34 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by ratings
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), 
+                                                 style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Ratings: ' ), #id='placeholder3'),
+                                            html.H4('Choose another team: ' ),
+                                            dcc.Dropdown(options = team_names_dict, 
+                                                         value = ['Alabama'],
+                                                         id = "dropdown2"
+                                                        ),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
                                 ]) 
                         ], width=3),
-                        dbc.Col([
-                            html.Div([
-                                dbc.Card(
-                                    dbc.CardBody([
-                                        # best branded team by %capacity
-                                        html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
-                                        html.Div([
-                                            html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
-                                            ], style={'textAlign': 'center'})
-                                        ])
-                                    ),
-                                ]) 
-                        ], width=3),
+
+#                         dbc.Col([
+#                             html.Div([
+#                                 dbc.Card(
+#                                     dbc.CardBody([
+#                                         # best branded team by %capacity
+#                                         html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+#                                         html.Div([
+#                                             html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
+#                                             ], style={'textAlign': 'center'})
+#                                         ])
+#                                     ),
+#                                 ]) 
+#                         ], width=3),
+
                         
                     ], align='center'), 
                     html.Br(),
@@ -303,10 +333,10 @@ def render_content(tab):
                     # graphs with average stadium capacity and viewership per team
                     dbc.Row([
                         dbc.Col([
-                            draw_graph(id='viewership',figure=viewership) 
+                            dcc.Graph(id = 'time-series1') 
                         ], width=6),
                         dbc.Col([
-                            draw_graph(id='attendance',figure=attendance)
+                            dcc.Graph(id = 'time-series2')
                         ], width=6),
                     ], align='center'), 
                     html.Br(),     
@@ -407,6 +437,28 @@ def render_content(tab):
 # )
 # def update_graph(value):
 #     pass
+
+@app.callback(
+    Output('time-series1','figure'),
+    Input('dropdown1','value')
+)
+def update_graph(value):
+    fig = go.Figure(
+            data=go.Scatter(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
+                            y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['Percent_of_Capacity'],
+                            markers = True))
+    return fig
+
+@app.callback(
+    Output('time-series2','figure'),
+    Input('dropdown2','value')
+)
+def update_graph(value):
+    fig = go.Figure(
+            data=go.Scatter(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
+                            y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['Percent_of_Capacity'],
+                            markers = True))
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
