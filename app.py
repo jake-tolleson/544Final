@@ -317,19 +317,19 @@ app.layout = html.Div([
     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
     
     # create 3 tabs
-    dcc.Tabs(id="tabs-example-graph", value='tab-1-example-graph', children=[
+    dcc.Tabs(id="tabs", value='tab-1', children=[
         dcc.Tab(label='Best Branded Teams', value='tab-1'),
         dcc.Tab(label='Team Branding Comparison', value='tab-2'),
         dcc.Tab(label='Factors Associated with Good Branding', value='tab-3')
     ]),
-    html.Div(id='tabs-content-example-graph')
+    html.Div(id='tabs-content')
 
 
 ])
 
 # callback for choosing tabs
-@app.callback(Output('tabs-content-example-graph', 'children'),
-              Input('tabs-example-graph', 'value'))
+@app.callback(Output('tabs-content', 'children'),
+              Input('tabs', 'value'))
 def render_content(tab):
     if tab == 'tab-1':
         return  html.Div([ 
