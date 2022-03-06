@@ -35,7 +35,7 @@ color_dict = {'Tennessee':'rgb(255,130,0)',
                   'LSU':'rgb(70,29,124)',
                   'Auburn':'rgb(232,119,34)',
                   'Texas A&M':'rgb(80,0,0)',
-                  'Arkansas':'rgb(157,34,153)',
+                  'Arkansas':'rgb(157,34,53)',
                   '(Ole Miss)':'rgb(204,9,47)',
                   'Mississippi State':'rgb(93,23,37)'}
 
