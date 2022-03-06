@@ -210,7 +210,7 @@ summed_ranks = go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['VIEW
 
 summed_ranks.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
 summed_ranks.update_yaxes(title_text = 'Viewers per Game')
-summed_ranks.update_layout(title_text='Viewers per Game Associated with Combined Rankings of Playing Teams')
+summed_ranks.update_layout(title_text='Viewers per Game Associated with Summed Ranks')
 summed_ranks.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
@@ -221,7 +221,7 @@ summed_ranks.add_layout_image(
         sizex=45,
         sizey=16000000,
         sizing = 'stretch',
-        opacity=0.3,
+        opacity=0.1,
         layer="below")
     )
     # Set templates
@@ -280,9 +280,9 @@ ranks_views.add_layout_image(
     )
     # Set templates
 ranks_views.update_layout(template="plotly_white")
-ranks_views.update_xaxes( title_text = 'Ranking (*outside top 25 --> 26)')
+ranks_views.update_xaxes( title_text = 'Ranking')
 ranks_views.update_yaxes(title_text = 'Views')
-ranks_views.update_layout(title_text='Views vs Ranks of Single Teams')
+ranks_views.update_layout(title_text='Views Associated with Ranks of Single Teams')
 
 
 
