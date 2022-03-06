@@ -22,6 +22,7 @@ def draw_graph(id,*args, **kwargs):
             ),
         ])
 
+# 
 # color dictionary for every team's rgb
 color_dict = {'Tennessee':'rgb(255,130,0)',
                   'Alabama':'rgb(158,27,50)',
@@ -30,13 +31,13 @@ color_dict = {'Tennessee':'rgb(255,130,0)',
                   'Florida':'rgb(0,33,165)',
                   'South Carolina':'rgb(155,0,10)',
                   'Vanderbilt':'rgb(134,109,75)',
-                  'Missouri':'rgb(241,184,45)',
+                  'Missouri':'rgb(0,0,0)',
                   'LSU':'rgb(70,29,124)',
                   'Auburn':'rgb(232,119,34)',
                   'Texas A&M':'rgb(80,0,0)',
-                  'Arkansas':'rgb(157,134,153)',
-                  '(Ole Miss)':'rgb(137,207,240)',
-                  'Mississippi State':'rgb(204,204,204)'}
+                  'Arkansas':'rgb(157,34,153)',
+                  '(Ole Miss)':'rgb(204,9,47)',
+                  'Mississippi State':'rgb(93,23,37)'}
 
 # Function to choose correct logo
 def choose_logo(team):
@@ -509,17 +510,18 @@ def render_content(tab):
     Input('dropdown1','value')
 )
 def update_graph(team1):
-    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team1),['date','VIEWERS','Percent_of_Capacity']]
+    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team1),['date','VIEWERS','Percent_of_Capacity','homename']]
     new_df.sort_values('date',inplace=True)
 
-    team1_POC = new_df.groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean()
+    team1_POC = (new_df.loc[new_df['homename'].str.contains(team1),['date','Percent_of_Capacity']]
+                 .groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean())
     team1_Views = new_df.groupby(new_df['date'].map(lambda x: x.year))['VIEWERS'].mean()
     
     # time series of percent capacity
     fig1 = px.line(x=team1_POC.index,y=team1_POC)
     fig1.update_xaxes(title_text = 'Date of Game')
-    fig1.update_yaxes(title_text = 'Percent Capacity')
-    fig1.update_layout(title_text='Percent Capacity per Game')
+    fig1.update_yaxes(range=[0.65,1.02],title_text = 'Percent Capacity')
+    fig1.update_layout(title_text='Percent Capacity per Game by Year')
     fig1.update_traces(line_color=color_dict[team1]) 
     
     # get logo in background of graph
@@ -543,9 +545,9 @@ def update_graph(team1):
     # time series of viewers
     fig3 = px.line(x=team1_Views.index,y=team1_Views)
     
-    fig3.update_xaxes(title_text = 'Date of Game')
-    fig3.update_yaxes(title_text = 'Number of Viewers')
-    fig3.update_layout(title_text= 'Viewership per Game')
+    fig3.update_xaxes(title_text = 'Year')
+    fig3.update_yaxes(range=[500000,7500000],title_text = 'Number of Viewers')
+    fig3.update_layout(title_text= 'Viewership per Game by Year')
     fig3.update_traces(line_color=color_dict[team1]) 
     
     # get logo in background of graph
@@ -574,17 +576,18 @@ def update_graph(team1):
     Input('dropdown2','value')
 )
 def update_graph(team2):
-    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team2),['date','VIEWERS','Percent_of_Capacity']]
+    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team2),['date','VIEWERS','Percent_of_Capacity','homename']]
     new_df.sort_values('date',inplace=True)
 
-    team2_POC = new_df.groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean()
+    team2_POC = (new_df.loc[new_df['homename'].str.contains(team2),['date','Percent_of_Capacity']]
+                 .groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean())
     team2_Views = new_df.groupby(new_df['date'].map(lambda x: x.year))['VIEWERS'].mean()
     
     # time series of percent capacity
     fig2 = px.line(x=team2_POC.index,y=team2_POC)
-    fig2.update_xaxes(title_text = 'Date of Game')
+    fig2.update_xaxes(title_text = 'Year')
     fig2.update_yaxes(title_text = 'Percent Capacity')
-    fig2.update_layout(title_text='Percent Capacity per Game')
+    fig2.update_layout(title_text='Percent Capacity per Game by Year')
     fig2.update_traces(line_color=color_dict[team2]) 
     
     # get logo in background of graph
@@ -608,9 +611,9 @@ def update_graph(team2):
     # time series of viewers
     fig4 = px.line(x=team2_Views.index,y=team2_Views)
     
-    fig4.update_xaxes(title_text = 'Date of Game')
+    fig4.update_xaxes(title_text = 'Year')
     fig4.update_yaxes(title_text = 'Number of Viewers')
-    fig4.update_layout(title_text= 'Viewership per Game')
+    fig4.update_layout(title_text= 'Viewership per Game by Year')
     fig4.update_traces(line_color=color_dict[team2]) 
     
     # get logo in background of graph
