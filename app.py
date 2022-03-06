@@ -520,7 +520,7 @@ def update_graph(team1):
     # time series of percent capacity
     fig1 = px.line(x=team1_POC.index,y=team1_POC)
     fig1.update_xaxes(title_text = 'Date of Game')
-    fig1.update_yaxes(range=[0.65,1.02],title_text = 'Percent Capacity')
+    fig1.update_yaxes(range=[0.65,1.03],title_text = 'Percent Capacity')
     fig1.update_layout(title_text='Percent Capacity per Game by Year')
     fig1.update_traces(line_color=color_dict[team1]) 
     
@@ -586,7 +586,7 @@ def update_graph(team2):
     # time series of percent capacity
     fig2 = px.line(x=team2_POC.index,y=team2_POC)
     fig2.update_xaxes(title_text = 'Year')
-    fig2.update_yaxes(title_text = 'Percent Capacity')
+    fig2.update_yaxes(range=[0.65,1.03],title_text = 'Percent Capacity')
     fig2.update_layout(title_text='Percent Capacity per Game by Year')
     fig2.update_traces(line_color=color_dict[team2]) 
     
@@ -612,7 +612,7 @@ def update_graph(team2):
     fig4 = px.line(x=team2_Views.index,y=team2_Views)
     
     fig4.update_xaxes(title_text = 'Year')
-    fig4.update_yaxes(title_text = 'Number of Viewers')
+    fig4.update_yaxes(range=[500000,7500000],title_text = 'Number of Viewers')
     fig4.update_layout(title_text= 'Viewership per Game by Year')
     fig4.update_traces(line_color=color_dict[team2]) 
     
