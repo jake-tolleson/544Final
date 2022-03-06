@@ -133,13 +133,18 @@ MERGED['added_rank'] = MERGED['rank_home'] + MERGED['rank_vis']
 ranks = []
 views=[]
 ranks_vis=[]
+attend=[]
 
+# lists of individual ranks, teams, views, and percent cap
 ranks = [rank for rank in MERGED['rank_home']]
 home = [team for team in MERGED['homename']]
 ranks_vis = [rank for rank in MERGED['rank_vis']]
 vis = [team for team in MERGED['visname']]
-ranks.extend(ranks_vis)
 views = [views for views in MERGED['VIEWERS']]
+attend = [attend for attend in MERGED['Percent_of_Capacity']]
+
+attend.extend(attend)
+ranks.extend(ranks_vis)
 views.extend(views)
 teams = home + vis
 
@@ -266,6 +271,31 @@ ranks_views.update_layout(template="plotly_white")
 ranks_views.update_xaxes( title_text = 'Ranking')
 ranks_views.update_yaxes(title_text = 'Views')
 ranks_views.update_layout(title_text='Viewership by Ranking')
+
+# Figure with ranks against percent capacity
+ranks_attend = go.Figure(data=[go.Scatter(x=ranks, y=attend, mode='markers',
+                                 marker=dict(color='navy'),
+                                 text=teams,
+                                 hovertemplate = "<b>Team: </b> %{text} <br>"
+                                 )])
+ranks_attend.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=.3,
+        y=1,
+        sizex=28,
+        sizey=.8,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+ranks_attend.update_layout(template="plotly_white")
+ranks_attend.update_xaxes( title_text = 'Ranking')
+ranks_attend.update_yaxes(title_text = 'Percent Capacity')
+ranks_attend.update_layout(title_text='Percent Capacity by Ranking')
 
 
 
@@ -496,7 +526,8 @@ def render_content(tab):
                             draw_graph(id='networks',figure=networks) 
                         ], width=4),
                         dbc.Col([
-                            draw_graph(id='ranks_views',figure=ranks_views) 
+                            draw_graph(id='ranks_views',figure=ranks_views),
+                            draw_graph(id='ranks_attend', figure=ranks_attend) 
                         ], width=4),
                     ], align='center'), 
                     html.Br(),     
