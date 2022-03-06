@@ -22,6 +22,21 @@ def draw_graph(id,*args, **kwargs):
             ),
         ])
 
+# color dictionary for every team's rgb
+color_dict = {'Tennessee':'rgb(255,130,0)',
+                  'Alabama':'rgb(158,27,50)',
+                  'Georgia':'rgb(186,12,47)',
+                  'Kentucky':'rgb(0,51,160)',
+                  'Florida':'rgb(0,33,165)',
+                  'South Carolina':'rgb(155,0,10)',
+                  'Vanderbilt':'rgb(134,109,75)',
+                  'Missouri':'rgb(241,184,45)',
+                  'LSU':'rgb(70,29,124)',
+                  'Auburn':'rgb(232,119,34)',
+                  'Texas A&M':'rgb(80,0,0)',
+                  'Arkansas':'rgb(157,134,153)',
+                  '(Ole Miss)':'rgb(137,207,240)',
+                  'Mississippi State':'rgb(204,204,204)'}
 
 # Function to choose correct logo
 def choose_logo(team):
@@ -31,7 +46,7 @@ def choose_logo(team):
         value = 'logos/UA.png'
     elif team == 'Missouri':
         value =  'logos/MU.png'
-    elif team == 'Mississippi (Ole Miss)':
+    elif team == '(Ole Miss)':
         value =  'logos/OM.png'
     elif team == 'Mississippi State':
         value = 'logos/MSU.png'
@@ -63,26 +78,7 @@ RATINGS = pd.read_csv('TV_Ratings_onesheet.csv',engine='pyarrow')
 GAMES = pd.read_csv('games_flat_xml_2012-2018.csv',engine='pyarrow')
 CAPACITY = pd.read_csv('capacity.csv',engine='pyarrow')
 
-# clean these duration formats
-GAMES.loc[679,'duration'] = '3:07'
-GAMES.loc[579,'duration'] = '3:14'
-GAMES.loc[624,'duration'] = '3:05'
-GAMES.loc[773,'duration'] = '2:11'
-GAMES.loc[312,'duration'] = '0:00'
-GAMES.loc[483,'duration'] = '3:25'
-GAMES.loc[491,'duration'] = '0:00'
-GAMES.loc[781,'duration'] = '3:00'
-
-# function to convert duration into minutes
-def duration_minutes(time):
-    hour = np.int16(time.split(':')[0]) * 60
-    minutes = np.int16(time.split(':')[1])
-    return hour+minutes
-
-# use function on duration column
-GAMES['duration_minutes'] = GAMES['duration'].apply(duration_minutes)
-
-# this attendance value is a typo
+# this attendance value is a typo. 710,004 should be 71,004
 GAMES.loc[GAMES['attend'] > 200000,'attend'] = 71004
 
 # merge the 3 datasets
@@ -93,22 +89,8 @@ MERGED = pd.merge(MERGED,CAPACITY,on=['homename','stadium'])
 # a KPI we will use is perecent of capacity
 MERGED['Percent_of_Capacity'] = MERGED['attend']/MERGED['Capacity']
 
-# compute total tds scored
-MERGED['total_td'] = MERGED[['rush_td_home','pass_td_home','rush_td_vis','pass_td_vis']].sum(axis=1)
-# compute total points scored
-MERGED['total_pts'] = MERGED[['score_home','score_vis']].sum(axis=1)
-# compute point differential
-MERGED['pts_diff'] = np.abs(MERGED['score_home'] - MERGED['score_vis'])
-
-#Weather: Categorizing
-MERGED.loc[MERGED['weather'].str.contains('Sunny|Clear|fair|beautiful|nice', case = False)==True,'weather'] = 'Clear'
-MERGED.loc[MERGED['weather'].str.contains('Cloudy|cldy|clouds|foggy|overcast|Haze', case = False)==True,'weather'] = 'Cloudy'
-MERGED.loc[MERGED['weather'].str.contains('Rain|Showers|storms|scattered', case = False)==True,'weather'] = 'Rain'
-MERGED.loc[MERGED['weather'].str.contains('Roof Closed|indoors|indoor|dome', case = False)==True,'weather'] = 'Indoors'
-MERGED.loc[MERGED['weather'].str.contains('Humidity|Humid|Hot|Warm|Muggy', case = False)==True,'weather'] = 'Hot'
-MERGED.loc[MERGED['weather'].str.contains('Cool', case = False)==True,'weather'] = 'Cold'
-MERGED['weather'] = MERGED['weather'].replace({np.nan:'Unknown'})
-MERGED['weather'] = MERGED['weather'].replace({'':'Unknown'})
+# turn the date column into an actual date
+MERGED['date'] = MERGED['date'].astype(np.datetime64)
 
 # Need to be able to make summary statistics by SEC team
 # List of SEC teams
@@ -290,7 +272,7 @@ ranks_views.update_layout(title_text='Viewership by Ranking')
 team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'Alabama', 'value': 'Alabama'},
                    {'label': 'Missouri', 'value': 'Missouri'},
-                   {'label': 'Ole Miss', 'value': 'Mississippi (Ole Miss)'},
+                   {'label': 'Ole Miss', 'value': '(Ole Miss)'},
                    {'label': 'Mississippi State', 'value': 'Mississippi State'},
                    {'label': 'Florida', 'value': 'Florida'},
                    {'label': 'Tennessee', 'value': 'Tennessee'},
@@ -527,61 +509,60 @@ def render_content(tab):
     Input('dropdown1','value')
 )
 def update_graph(team1):
-    # time series of percent capacity
-    fig1 = go.Figure(
-            go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
-                        y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
-                            #markers = dict(color='navy')
-                            ))
+    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team1),['date','VIEWERS','Percent_of_Capacity']]
+    new_df.sort_values('date',inplace=True)
+
+    team1_POC = new_df.groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean()
+    team1_Views = new_df.groupby(new_df['date'].map(lambda x: x.year))['VIEWERS'].mean()
     
-    fig1.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    # time series of percent capacity
+    fig1 = px.line(x=team1_POC.index,y=team1_POC)
+    fig1.update_xaxes(title_text = 'Date of Game')
     fig1.update_yaxes(title_text = 'Percent Capacity')
     fig1.update_layout(title_text='Percent Capacity per Game')
-    fig1.update_yaxes(range=[.4,1.3])
+    fig1.update_traces(line_color=color_dict[team1]) 
     
     # get logo in background of graph
     image = choose_logo(team1) 
     fig1.add_layout_image(
         dict(
             source= Image.open(image),
-            xref="x",
-            yref="y",
-            x=.4,
-            y=1.3,
+            xref="x domain",
+            yref="y domain",
+            x=0.5,
+            y=0.5,
+            xanchor="center",
+            yanchor="middle",
             sizex=45,
-            sizey=.9,
-            sizing = 'stretch',
+            sizey=0.9,
             opacity=0.3,
-            layer="below")
+            layer='below')
         )
     fig1.update_layout(template="plotly_white") 
     
     # time series of viewers
-    fig3 = go.Figure(
-        go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
-                    y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['VIEWERS']
-                        #markers = dict(color='navy')
-                        ))
+    fig3 = px.line(x=team1_Views.index,y=team1_Views)
     
-    fig3.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig3.update_xaxes(title_text = 'Date of Game')
     fig3.update_yaxes(title_text = 'Number of Viewers')
-    fig3.update_layout(title_text='Viewership per Game')
-    fig3.update_yaxes(range=[0 ,15000000])
+    fig3.update_layout(title_text= 'Viewership per Game')
+    fig3.update_traces(line_color=color_dict[team1]) 
     
     # get logo in background of graph
     image = choose_logo(team1) 
     fig3.add_layout_image(
         dict(
             source= Image.open(image),
-            xref="x",
-            yref="y",
-            x=0,
-            y=15000000,
+            xref="x domain",
+            yref="y domain",
+            x=0.5,
+            y=0.5,
+            xanchor="center",
+            yanchor="middle",
             sizex=45,
-            sizey=15000000,
-            sizing = 'stretch',
+            sizey=0.9,
             opacity=0.3,
-            layer="below")
+            layer='below')
         )
     fig3.update_layout(template="plotly_white") 
     return fig1, fig3
@@ -593,58 +574,60 @@ def update_graph(team1):
     Input('dropdown2','value')
 )
 def update_graph(team2):
-    fig2 = go.Figure(
-            data=go.Scatter(x=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['date'],
-                            y=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['Percent_of_Capacity']
-                            #markers = dict(color='navy')
-                            ))
-    fig2.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team2),['date','VIEWERS','Percent_of_Capacity']]
+    new_df.sort_values('date',inplace=True)
+
+    team2_POC = new_df.groupby(new_df['date'].map(lambda x: x.year))['Percent_of_Capacity'].mean()
+    team2_Views = new_df.groupby(new_df['date'].map(lambda x: x.year))['VIEWERS'].mean()
+    
+    # time series of percent capacity
+    fig2 = px.line(x=team2_POC.index,y=team2_POC)
+    fig2.update_xaxes(title_text = 'Date of Game')
     fig2.update_yaxes(title_text = 'Percent Capacity')
     fig2.update_layout(title_text='Percent Capacity per Game')
-    fig2.update_yaxes(range=[.4,1.3])
+    fig2.update_traces(line_color=color_dict[team2]) 
     
     # get logo in background of graph
-    image = choose_logo(team2)
+    image = choose_logo(team2) 
     fig2.add_layout_image(
         dict(
             source= Image.open(image),
-            xref="x",
-            yref="y",
-            x=.4,
-            y=1.3,
+            xref="x domain",
+            yref="y domain",
+            x=0.5,
+            y=0.5,
+            xanchor="center",
+            yanchor="middle",
             sizex=45,
-            sizey=.9,
-            sizing = 'stretch',
+            sizey=0.9,
             opacity=0.3,
-            layer="below")
+            layer='below')
         )
     fig2.update_layout(template="plotly_white") 
     
-    fig4 = go.Figure(
-    go.Scatter(x=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['date'],
-                y=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['VIEWERS']
-                    #markers = dict(color='navy')
-                    ))
+    # time series of viewers
+    fig4 = px.line(x=team2_Views.index,y=team2_Views)
     
-    fig4.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig4.update_xaxes(title_text = 'Date of Game')
     fig4.update_yaxes(title_text = 'Number of Viewers')
-    fig4.update_layout(title_text='Viewership per Game')
-    fig4.update_yaxes(range=[0 ,15000000])
+    fig4.update_layout(title_text= 'Viewership per Game')
+    fig4.update_traces(line_color=color_dict[team2]) 
     
     # get logo in background of graph
     image = choose_logo(team2) 
     fig4.add_layout_image(
         dict(
             source= Image.open(image),
-            xref="x",
-            yref="y",
-            x=0,
-            y=15000000,
+            xref="x domain",
+            yref="y domain",
+            x=0.5,
+            y=0.5,
+            xanchor="center",
+            yanchor="middle",
             sizex=45,
-            sizey=15000000,
-            sizing = 'stretch',
+            sizey=0.9,
             opacity=0.3,
-            layer="below")
+            layer='below')
         )
     fig4.update_layout(template="plotly_white") 
     return fig2, fig4
