@@ -129,7 +129,8 @@ for i in SEC_teams:
     d.append({
         'Team':i,
         'AvgViews':df['VIEWERS'].mean(),
-        'Avgattend':df['Percent_of_Capacity'].mean()
+        'Avgattend':df.loc[df['homename'].str.contains(i),'Percent_of_Capacity'].mean(),
+        'AvgRating':df['RATING'].mean()
     })
 # turn the list of dictionaries into a dataframe
 df = pd.DataFrame(d)
@@ -360,7 +361,7 @@ def render_content(tab):
                                         # best branded team by viewers
                                         html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Viewers: '), #id='placeholder2'),
+                                            html.H4('Highest Avg TV Viewers: '+str("{:,}".format(np.int64(df['AvgViews'].max())))), #id='placeholder2'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                 ),])
@@ -372,8 +373,8 @@ def render_content(tab):
                                         # best branded team by ratings
                                         html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Ratings: ' ), #id='placeholder3'),
-                                            ], style={'textAlign': 'center'})
+                                            html.H4('Highest Avg TV Rating: ' + str("{:,}".format(np.round(df['AvgRating'].max()),2))), #id='placeholder3'),
+                                            ], style={'textAlign': 'center'}) 
                                         ])
                                     ),
                                 ]) 
@@ -385,7 +386,7 @@ def render_content(tab):
                                         # best branded team by %capacity
                                         html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
+                                            html.H4('Highest Avg Stadium Capacity: '+format(df['Avgattend'].max()*100, '.1f')+'%'), #id='placeholder4'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
