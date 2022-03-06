@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
 import layouts
+import plotly.graph_objects as go 
 #from layouts import Page1Layout, Page2Layout
 
 # Function to create graphs
@@ -156,7 +157,7 @@ team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'South Carolina', 'value': 'South Carolina'}]
 
 # initialize app
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
+app = Dash(suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP],
               meta_tags=[
                   {"name": "viewport", "content": "width=device-width, initial-scale=1"}
                   ]
@@ -165,9 +166,11 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],
 # layout
 app.layout = html.Div([
 
-        # sec logo and slogan
+    # sec logo and slogan
     html.Img(src = Image.open('logos\SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
     html.H1('"It Just Means More"', style={'width': '90%','display': 'inline-block'}),
+    
+    # create 3 tabs
     dcc.Tabs(id="tabs-example-graph", value='tab-1-example-graph', children=[
         dcc.Tab(label='Best Branded Teams', value='tab-1'),
         dcc.Tab(label='Team Branding Comparison', value='tab-2'),
@@ -177,6 +180,8 @@ app.layout = html.Div([
 
 
 ])
+
+# callback for choosing tabs
 @app.callback(Output('tabs-content-example-graph', 'children'),
               Input('tabs-example-graph', 'value'))
 def render_content(tab):
@@ -257,6 +262,8 @@ def render_content(tab):
                 ]), color = 'light'
             )
         ])
+        
+    # layout for 2nd tab, team comparisons
     elif tab == 'tab-2':
         return html.Div([ 
             # create row of cards with best branded teams
@@ -278,14 +285,14 @@ def render_content(tab):
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
-                                        # best branded team by viewers
+                                        # choose 1st team to compare
                                         html.Img(src = Image.open('logos/SEC.png'), 
                                                  style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
                                             html.Div([
                                                 html.H4('Choose a team: ' ),
                                                 dcc.Dropdown(options = team_names_dict, 
-                                                             value = ['Tennessee'],
+                                                             value = 'Tennessee',
                                                              id = "dropdown1"
                                                     ),
                                                 ], style={'textAlign': 'center'})
@@ -297,13 +304,13 @@ def render_content(tab):
                             html.Div([
                                 dbc.Card(
                                     dbc.CardBody([
-                                        # best branded team by ratings
+                                        # choose 2nd team to compare
                                         html.Img(src = Image.open('logos/SEC.png'), 
                                                  style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
                                             html.H4('Choose another team: ' ),
                                             dcc.Dropdown(options = team_names_dict, 
-                                                         value = ['Alabama'],
+                                                         value = 'Alabama',
                                                          id = "dropdown2"
                                                         ),
                                             ], style={'textAlign': 'center'})
@@ -330,7 +337,7 @@ def render_content(tab):
                     ], align='center'), 
                     html.Br(),
                     
-                    # graphs with average stadium capacity and viewership per team
+                    # time series of viewership for both teams
                     dbc.Row([
                         dbc.Col([
                             dcc.Graph(id = 'time-series1') 
@@ -442,23 +449,33 @@ def render_content(tab):
     Output('time-series1','figure'),
     Input('dropdown1','value')
 )
-def update_graph(value):
-    fig = go.Figure(
-            data=go.Scatter(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
-                            y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['Percent_of_Capacity'],
-                            markers = True))
-    return fig
+def update_graph(team1):
+    fig1 = go.Figure(
+            data=go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
+                            y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
+                            #markers = dict(color='navy')
+                            ))
+    fig1.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig1.update_yaxes(title_text = 'Percent Capacity')
+    fig1.update_layout(title_text='Percent Capacity per Game')
+    fig1.update_yaxes(range=[.8,1.1])
+    return fig1
 
 @app.callback(
     Output('time-series2','figure'),
     Input('dropdown2','value')
 )
-def update_graph(value):
-    fig = go.Figure(
-            data=go.Scatter(x=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['date'],
-                            y=MERGED[(MERGED['homename'] == team) |( MERGED['visname'] == team)]['Percent_of_Capacity'],
-                            markers = True))
-    return fig
+def update_graph(team2):
+    fig2 = go.Figure(
+            data=go.Scatter(x=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['date'],
+                            y=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['Percent_of_Capacity']
+                            #markers = dict(color='navy')
+                            ))
+    fig2.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig2.update_yaxes(title_text = 'Percent Capacity')
+    fig2.update_layout(title_text='Percent Capacity per Game')
+    fig2.update_yaxes(range=[.8,1.1])
+    return fig2
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
