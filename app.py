@@ -136,7 +136,32 @@ df = pd.DataFrame(d)
 # sort the data frame by team name
 df.sort_values('Team',inplace=True)
 
+# Engineer new variable: summed ranks of teams playing
+import plotly.graph_objects as go
+MERGED['rank_home'].unique()
+MERGED['rank_home'] = MERGED['rank_home'].replace({'character(0)':'26'})
+MERGED['rank_home'] = MERGED['rank_home'].astype(int)
+MERGED['rank_vis'].unique()
+MERGED['rank_vis'] = MERGED['rank_vis'].replace({'character(0)':'26'})
+MERGED['rank_vis'] = MERGED['rank_vis'].astype(int)
+MERGED['added_rank'] = MERGED['rank_home'] + MERGED['rank_vis']
+
+# define lists of individual rankings and viewers
+ranks = []
+views=[]
+ranks_vis=[]
+
+ranks = [rank for rank in MERGED['rank_home']]
+home = [team for team in MERGED['homename']]
+ranks_vis = [rank for rank in MERGED['rank_vis']]
+vis = [team for team in MERGED['visname']]
+ranks.extend(ranks_vis)
+views = [views for views in MERGED['VIEWERS']]
+views.extend(views)
+teams = home + vis
+
 # Define figures with average stats per team
+# avg viewers graph
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
             line_dash='dot',
@@ -156,7 +181,7 @@ viewership.update_layout(title={
 viewership.update_traces(marker_color='navy')
 viewership.layout.template = 'plotly_white'
 
-
+# avg attendance graph
 attendance = px.bar(data_frame=df,x='Team',y='Avgattend')
 attendance.add_hline(df['Avgattend'].mean(),
             line_dash='dot',
@@ -175,6 +200,91 @@ attendance.update_layout(title={
         xaxis_title="School",
         yaxis_title="Percent of Capacity")
 attendance.layout.template = 'plotly_white'
+
+# summed rank graph
+summed_ranks_data=MERGED['added_rank']
+summed_ranks = go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['VIEWERS'], mode='markers',
+                                 marker=dict(color='navy'),
+                                 text=summed_ranks_data,
+                                 hovertemplate = "<b>Summed Rank of Teams: </b> %{text} <br>")])
+
+summed_ranks.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
+summed_ranks.update_yaxes(title_text = 'Viewers per Game')
+summed_ranks.update_layout(title_text='Viewers per Game Associated with Summed Ranks')
+summed_ranks.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=0,
+        y=16000000,
+        sizex=45,
+        sizey=16000000,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+summed_ranks.update_layout(template="plotly_white")
+
+# Networks Graph
+y0= MERGED[MERGED['Network']=='CBS']['added_rank']
+y1 = MERGED[MERGED['Network']=='ESPN']['added_rank']
+y3 = MERGED[MERGED['Network']=='ESPN2']['added_rank']
+y4 = MERGED[MERGED['Network']=='ABC']['added_rank'] 
+
+networks = go.Figure()
+networks.add_trace(go.Box(y=y0, name='CBS', boxpoints='all'))
+networks.add_trace(go.Box(y=y1, name='ESPN', boxpoints='all'))
+networks.add_trace(go.Box(y=y3, name='ESPN2',boxpoints='all'))
+networks.add_trace(go.Box(y=y4, name='ABC',boxpoints='all'))
+
+
+networks.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=0,
+        y=50,
+        sizex=3,
+        sizey=50,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+networks.update_layout(template="plotly_white")
+networks.update_xaxes( title_text = 'Network')
+networks.update_yaxes(title_text = 'Summed Rank')
+networks.update_layout(title_text='Summed Rank of Teams per Game, per Network')
+
+# Figure for ranks of single teams
+ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
+                                 marker=dict(color='navy'),
+                                 text=teams,
+                                 hovertemplate = "<b>Team: </b> %{text} <br>"
+                                 )])
+ranks_views.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=0,
+        y=15000000,
+        sizex=30,
+        sizey=15000000,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+ranks_views.update_layout(template="plotly_white")
+ranks_views.update_xaxes( title_text = 'Ranking')
+ranks_views.update_yaxes(title_text = 'Views')
+ranks_views.update_layout(title_text='Views Associated with Ranks of Single Teams')
+
+
 
 # Creating an object for "options" in the dropdown menu.
 team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
@@ -400,7 +510,7 @@ def render_content(tab):
                                     dbc.CardBody([
                                         # header for best branded teams
                                         html.Div([
-                                            html.H2('Best Branded Teams by Viewership and Stadium Capacity: ')
+                                            html.H2('Factors Potentially Affecting Viewership: ')
                                         ], style={'textAlign': 'center'}),
                                         # html.Div([
                                         #     dcc.Dropdown(
@@ -415,9 +525,10 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by viewers
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Viewers: '), #id='placeholder2'),
+                                            html.H4('Summed Ranks of Playing Teams'), #id='placeholder2'),
+                                            html.H6('*Outside Top 25 --> 26 = Rank')
                                             ], style={'textAlign': 'center'})
                                         ])
                                 ),])
@@ -427,9 +538,9 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by ratings
-                                        html.Img(src = Image.open('logos/UA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Ratings: ' ), #id='placeholder3'),
+                                            html.H4('Networks' ), #id='placeholder3'),
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
@@ -440,9 +551,10 @@ def render_content(tab):
                                 dbc.Card(
                                     dbc.CardBody([
                                         # best branded team by %capacity
-                                        html.Img(src = Image.open('logos/UGA.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
+                                        html.Img(src = Image.open('logos/SEC.png'), style={'height':'8%', 'width':'8%', 'display': 'inline-block'}),
                                         html.Div([
-                                            html.H4('Avg Stadium Capacity: '), #id='placeholder4'),
+                                            html.H4('Ranks of Single Teams'), #id='placeholder4'),
+                                            html.H6('*Outside Top 25 --> 26 = Rank')
                                             ], style={'textAlign': 'center'})
                                         ])
                                     ),
@@ -455,11 +567,14 @@ def render_content(tab):
                     # graphs with average stadium capacity and viewership per team
                     dbc.Row([
                         dbc.Col([
-                            draw_graph(id='viewership',figure=viewership) 
-                        ], width=6),
+                            draw_graph(id='summed_ranks',figure=summed_ranks)  
+                        ], width=4),
                         dbc.Col([
-                            draw_graph(id='attendance',figure=attendance)
-                        ], width=6),
+                            draw_graph(id='networks',figure=networks) 
+                        ], width=4),
+                        dbc.Col([
+                            draw_graph(id='ranks_views',figure=ranks_views) 
+                        ], width=4),
                     ], align='center'), 
                     html.Br(),     
                 ]), color = 'light'
@@ -489,6 +604,7 @@ def render_content(tab):
     Input('dropdown1','value')
 )
 def update_graph(team1):
+    # time series of percent capacity
     fig1 = go.Figure(
             go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
                         y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
@@ -517,6 +633,7 @@ def update_graph(team1):
         )
     fig1.update_layout(template="plotly_white") 
     
+    # time series of viewers
     fig3 = go.Figure(
         go.Scatter(x=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['date'],
                     y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['VIEWERS']
