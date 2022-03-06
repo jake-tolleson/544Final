@@ -292,7 +292,7 @@ def render_content(tab):
                                             html.Div([
                                                 html.H4('Choose a team: ' ),
                                                 dcc.Dropdown(options = team_names_dict, 
-                                                             value = ['Tennessee'],
+                                                             value = 'Tennessee',
                                                              id = "dropdown1"
                                                     ),
                                                 ], style={'textAlign': 'center'})
@@ -310,7 +310,7 @@ def render_content(tab):
                                         html.Div([
                                             html.H4('Choose another team: ' ),
                                             dcc.Dropdown(options = team_names_dict, 
-                                                         value = ['Alabama'],
+                                                         value = 'Alabama',
                                                          id = "dropdown2"
                                                         ),
                                             ], style={'textAlign': 'center'})
@@ -455,6 +455,10 @@ def update_graph(team1):
                             y=MERGED[(MERGED['homename'] == team1) |( MERGED['visname'] == team1)]['Percent_of_Capacity']
                             #markers = dict(color='navy')
                             ))
+    fig1.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig1.update_yaxes(title_text = 'Percent Capacity')
+    fig1.update_layout(title_text='Percent Capacity per Game')
+    fig1.update_yaxes(range=[.8,1.1])
     return fig1
 
 @app.callback(
@@ -467,6 +471,10 @@ def update_graph(team2):
                             y=MERGED[(MERGED['homename'] == team2) |( MERGED['visname'] == team2)]['Percent_of_Capacity']
                             #markers = dict(color='navy')
                             ))
+    fig2.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
+    fig2.update_yaxes(title_text = 'Percent Capacity')
+    fig2.update_layout(title_text='Percent Capacity per Game')
+    fig2.update_yaxes(range=[.8,1.1])
     return fig2
 
 if __name__ == '__main__':
