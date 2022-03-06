@@ -22,6 +22,41 @@ def draw_graph(id,*args, **kwargs):
             ),
         ])
 
+
+# Function to choose correct logo
+def choose_logo(team):
+    if team == 'Georgia':
+        value = 'logos/UGA.png'
+    elif team == 'Alabama':
+        value = 'logos/UA.png'
+    elif team == 'Missouri':
+        value =  'logos/MU.png'
+    elif team == 'Mississippi (Ole Miss)':
+        value =  'logos/OM.png'
+    elif team == 'Mississippi State':
+        value = 'logos/MSU.png'
+    elif team == 'Florida':
+        value = 'logos/UF.png'
+    elif team == 'Tennessee':
+        value = 'logos/UT.png'
+    elif team == 'LSU':
+        value = 'logos/LSU.png'
+    elif team == 'Texas A&M':
+        value = 'logos/TAM.png'
+    elif team == 'Kentucky':
+        value = 'logos/UK.png'
+    elif team == 'Auburn' :
+        value =  'logos/AU.png'
+    elif team == 'Vanderbilt':
+        value = 'logos/VU.png'
+    elif team == 'Arkansas':
+        value = 'logos/UAK.png'
+    elif team == 'South Carolina':
+        value = 'logos/USC.png'
+    else: value = 'logos/SEC.png'
+    return value
+    
+
 # Read in files
 # Need pandas version > 1.4 and pyarrow installed
 RATINGS = pd.read_csv('TV_Ratings_onesheet.csv',engine='pyarrow')
@@ -458,8 +493,26 @@ def update_graph(team1):
     fig1.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
     fig1.update_yaxes(title_text = 'Percent Capacity')
     fig1.update_layout(title_text='Percent Capacity per Game')
-    fig1.update_yaxes(range=[.8,1.1])
+    fig1.update_yaxes(range=[.4,1.3])
+    
+    # get logo in background of graph
+    image = choose_logo(team1) 
+    fig1.add_layout_image(
+        dict(
+            source= Image.open(image),
+            xref="x",
+            yref="y",
+            x=.4,
+            y=1.3,
+            sizex=45,
+            sizey=.9,
+            sizing = 'stretch',
+            opacity=0.3,
+            layer="below")
+        )
+    fig1.update_layout(template="plotly_white") 
     return fig1
+
 
 @app.callback(
     Output('time-series2','figure'),
@@ -474,7 +527,24 @@ def update_graph(team2):
     fig2.update_xaxes(range=[0,51.5], title_text = 'Date of Game')
     fig2.update_yaxes(title_text = 'Percent Capacity')
     fig2.update_layout(title_text='Percent Capacity per Game')
-    fig2.update_yaxes(range=[.8,1.1])
+    fig2.update_yaxes(range=[.4,1.3])
+    
+    # get logo in background of graph
+    image = choose_logo(team2)
+    fig2.add_layout_image(
+        dict(
+            source= Image.open(image),
+            xref="x",
+            yref="y",
+            x=.4,
+            y=1.3,
+            sizex=45,
+            sizey=.9,
+            sizing = 'stretch',
+            opacity=0.3,
+            layer="below")
+        )
+    fig2.update_layout(template="plotly_white") 
     return fig2
 
 if __name__ == '__main__':
