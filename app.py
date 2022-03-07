@@ -519,7 +519,7 @@ def update_graph(team1):
     
     # time series of percent capacity
     fig1 = px.line(x=team1_POC.index,y=team1_POC)
-    fig1.update_xaxes(title_text = 'Date of Game')
+    fig1.update_xaxes(title_text = 'Year')
     fig1.update_yaxes(range=[0.65,1.03],title_text = 'Percent Capacity')
     fig1.update_layout(title_text='Percent Capacity per Game by Year')
     fig1.update_traces(line_color=color_dict[team1]) 
