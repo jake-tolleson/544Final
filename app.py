@@ -158,7 +158,7 @@ teams = home + vis
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
             line_dash='dot',
-            annotation_text="Average: "+str("{:,}".format(np.int64(df['AvgViews'].mean()))), 
+            annotation_text="<b>Average:<b> "+str("{:,}".format(np.int64(df['AvgViews'].mean()))), 
             annotation_position="top right",
             annotation_font_size=12,
             annotation_font_color="red")
@@ -178,7 +178,7 @@ viewership.layout.template = 'plotly_white'
 attendance = px.bar(data_frame=df,x='Team',y='Avgattend')
 attendance.add_hline(df['Avgattend'].mean(),
             line_dash='dot',
-            annotation_text="Average: "+str(np.round(df['Avgattend'].mean(),2)), 
+            annotation_text="<b>Average:<b> "+str(np.round(df['Avgattend'].mean()*100,1))+'%', 
             annotation_position="top right",
             annotation_font_size=12,
             annotation_font_color="red")
@@ -191,7 +191,8 @@ attendance.update_layout(title={
             'yanchor': 'top'},
         title_font_color="black",
         xaxis_title="School",
-        yaxis_title="Percent of Capacity")
+        yaxis_title="Percent of Capacity",
+        yaxis={'tickformat':".0%"})
 attendance.layout.template = 'plotly_white'
 
 # summed rank graph - 3rd tab
@@ -207,15 +208,16 @@ summed_ranks.update_layout(title_text='Viewership by Matchup Weight')
 summed_ranks.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
-        xref="x",
-        yref="y",
-        x=0,
-        y=16000000,
-        sizex=50,
-        sizey=16000000,
-        sizing = 'stretch',
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
         opacity=0.1,
-        layer="below")
+        layer='below')
     )
     # Set templates
 summed_ranks.update_layout(template="plotly_white")
@@ -227,55 +229,88 @@ summed_rank_attend= go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED[
                                  hovertemplate = "<b>Summed Rank of Teams: </b> %{text} <br>")])
                             
 summed_rank_attend.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
-summed_rank_attend.update_yaxes(range=[.6,1.2], title_text = 'Percent Capacity per Game')
-summed_rank_attend.update_layout(title_text='Capacity by Matchup Weight')
+summed_rank_attend.update_yaxes(range=[.6,1.2], title_text = 'Percent of Capacity per Game')
+summed_rank_attend.update_layout(title_text='Percent of Capacity by Matchup Weight',yaxis={'tickformat':".0%"})
 summed_rank_attend.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
-        xref="x",
-        yref="y",
-        x=.2,
-        y=1.2,
-        sizex=50,
-        sizey=.6,
-        sizing = 'stretch',
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
         opacity=0.1,
-        layer="below")
+        layer='below')
     )
     # Set templates
 summed_rank_attend.update_layout(template="plotly_white")
 
+
 # Networks Graph and summed ranks - 3rd tab
-y0= MERGED[MERGED['Network']=='CBS']['added_rank']
-y1 = MERGED[MERGED['Network']=='ESPN']['added_rank']
-y3 = MERGED[MERGED['Network']=='ESPN2']['added_rank']
-y4 = MERGED[MERGED['Network']=='ABC']['added_rank'] 
+y0 = MERGED.loc[MERGED['Network']=='CBS',['added_rank','VIEWERS']]
+y1 = MERGED.loc[MERGED['Network']=='ESPN',['added_rank','VIEWERS']]
+y3 = MERGED.loc[MERGED['Network']=='ESPN2',['added_rank','VIEWERS']]
+y4 = MERGED.loc[MERGED['Network']=='ABC',['added_rank','VIEWERS']]
+
 
 networks = go.Figure()
-networks.add_trace(go.Box(y=y0, name='CBS', boxpoints='all'))
-networks.add_trace(go.Box(y=y1, name='ESPN', boxpoints='all'))
-networks.add_trace(go.Box(y=y3, name='ESPN2',boxpoints='all'))
-networks.add_trace(go.Box(y=y4, name='ABC',boxpoints='all'))
+networks.add_trace(go.Box(y=y0['added_rank'], name='CBS', boxpoints='all'))
+networks.add_trace(go.Box(y=y1['added_rank'], name='ESPN', boxpoints='all'))
+networks.add_trace(go.Box(y=y3['added_rank'], name='ESPN2',boxpoints='all'))
+networks.add_trace(go.Box(y=y4['added_rank'], name='ABC',boxpoints='all'))
 
 
 networks.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
-        xref="x",
-        yref="y",
-        x=0,
-        y=50,
-        sizex=3,
-        sizey=50,
-        sizing = 'stretch',
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
         opacity=0.1,
-        layer="below")
+        layer='below')
     )
     # Set templates
 networks.update_layout(template="plotly_white")
 networks.update_xaxes( title_text = 'Network')
 networks.update_yaxes(title_text = 'Summed Rank')
 networks.update_layout(title_text='Weighted Matchup Distribution by Network')
+
+
+# Viewership by network graph
+network_views = go.Figure()
+network_views.add_trace(go.Box(y=y0['VIEWERS'], name='CBS', boxpoints='all'))
+network_views.add_trace(go.Box(y=y1['VIEWERS'], name='ESPN', boxpoints='all'))
+network_views.add_trace(go.Box(y=y3['VIEWERS'], name='ESPN2',boxpoints='all'))
+network_views.add_trace(go.Box(y=y4['VIEWERS'], name='ABC',boxpoints='all'))
+
+
+network_views.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
+        opacity=0.1,
+        layer='below')
+    )
+    # Set templates
+network_views.update_layout(template="plotly_white")
+network_views.update_xaxes( title_text = 'Network')
+network_views.update_yaxes(title_text = 'Number of Views')
+network_views.update_layout(title_text='TV Viewership Distribution by Network')
 
 # Figure for ranks of single teams - 3rd tab
 ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
@@ -286,15 +321,16 @@ ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
 ranks_views.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
-        xref="x",
-        yref="y",
-        x=0,
-        y=15000000,
-        sizex=28,
-        sizey=15000000,
-        sizing = 'stretch',
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
         opacity=0.1,
-        layer="below")
+        layer='below')
     )
     # Set templates
 ranks_views.update_layout(template="plotly_white")
@@ -311,21 +347,22 @@ ranks_attend = go.Figure(data=[go.Scatter(x=ranks, y=attend, mode='markers',
 ranks_attend.add_layout_image(
     dict(
         source= Image.open('logos/SEC.png'),
-        xref="x",
-        yref="y",
-        x=.3,
-        y=1,
-        sizex=28,
-        sizey=.8,
-        sizing = 'stretch',
+        xref="x domain",
+        yref="y domain",
+        x=0.5,
+        y=0.5,
+        xanchor="center",
+        yanchor="middle",
+        sizex=45,
+        sizey=0.9,
         opacity=0.1,
-        layer="below")
+        layer='below')
     )
     # Set templates
 ranks_attend.update_layout(template="plotly_white")
 ranks_attend.update_xaxes( title_text = 'Ranking')
-ranks_attend.update_yaxes(title_text = 'Percent Capacity')
-ranks_attend.update_layout(title_text='Percent Capacity by Ranking')
+ranks_attend.update_yaxes(title_text = 'Percent of Capacity')
+ranks_attend.update_layout(title_text='Percent of Capacity by Ranking',yaxis={'tickformat':".0%"})
 
 ########################## OTHER APP PREP ######################################
 # Creating an object for "options" in the dropdown menu.
@@ -554,6 +591,7 @@ def render_content(tab):
                             draw_graph(id='summed_rank_attend', figure=summed_rank_attend) 
                         ], width=4),
                         dbc.Col([
+                            draw_graph(id='network_views',figure=network_views),
                             draw_graph(id='networks',figure=networks) 
                         ], width=4),
                         dbc.Col([
@@ -587,7 +625,7 @@ def update_graph(team1):
     fig1 = px.line(x=team1_POC.index,y=team1_POC)
     fig1.update_xaxes(title_text = 'Year')
     fig1.update_yaxes(range=[0.65,1.03],title_text = 'Percent Capacity (Avg)')
-    fig1.update_layout(title_text='Percent Capacity per Game by Year')
+    fig1.update_layout(title_text='Percent Capacity per Game by Year',yaxis={'tickformat':".0%"})
     fig1.update_traces(line_color=color_dict[team1]) 
     
     # get logo in background of graph
@@ -653,7 +691,7 @@ def update_graph(team2):
     fig2 = px.line(x=team2_POC.index,y=team2_POC)
     fig2.update_xaxes(title_text = 'Year')
     fig2.update_yaxes(range=[0.65,1.03],title_text = 'Percent Capacity (Avg)')
-    fig2.update_layout(title_text='Percent Capacity per Game by Year')
+    fig2.update_layout(title_text='Percent Capacity per Game by Year',yaxis={'tickformat':".0%"})
     fig2.update_traces(line_color=color_dict[team2]) 
     
     # get logo in background of graph
