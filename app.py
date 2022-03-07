@@ -1,3 +1,8 @@
+# BZAN 544 Final Project
+# Jake Tolleson, Caleb Roberson, Aaron Dittmer, Rebecca Percy
+# Spring 2022
+
+# Import Modules
 import numpy as np
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
@@ -23,8 +28,7 @@ def draw_graph(id,*args, **kwargs):
             ),
         ])
 
-# 
-# color dictionary for every team's rgb
+# Color dictionary for every team's rgb
 color_dict = {'Tennessee':'rgb(255,130,0)',
                   'Alabama':'rgb(158,27,50)',
                   'Georgia':'rgb(186,12,47)',
@@ -154,6 +158,7 @@ teams = home + vis
 
 ################### STATIC GRAPHS #########################################################
 # Define figures with average stats per team
+
 # avg viewers graph - 1st tab
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
@@ -381,7 +386,7 @@ team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'Arkansas', 'value': 'Arkansas'},
                    {'label': 'South Carolina', 'value': 'South Carolina'}]
 
-###################### APP ######################################
+###################### APP #####################################################
 # initialize the app
 app = Dash(suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP],
               meta_tags=[
@@ -584,7 +589,7 @@ def render_content(tab):
                     ], align='center'), 
                     html.Br(),
                     
-                    # graphs with average stadium capacity and viewership per team, as well as network graph
+                    # graphs with average stadium capacity and viewership per team, as well as network graphs
                     dbc.Row([
                         dbc.Col([
                             draw_graph(id='summed_ranks',figure=summed_ranks), 
