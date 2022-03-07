@@ -206,7 +206,7 @@ summed_ranks.add_layout_image(
         yref="y",
         x=0,
         y=16000000,
-        sizex=45,
+        sizex=50,
         sizey=16000000,
         sizing = 'stretch',
         opacity=0.1,
@@ -214,6 +214,33 @@ summed_ranks.add_layout_image(
     )
     # Set templates
 summed_ranks.update_layout(template="plotly_white")
+
+# Figure for summed ranks against percent capacity
+summed_rank_attend= go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['Percent_of_Capacity'], mode='markers',
+                                 marker=dict(color='navy'),
+                                 text=summed_ranks_data,
+                                 hovertemplate = "<b>Summed Rank of Teams: </b> %{text} <br>")])
+                            
+
+#fig.update_traces(hovertemplate=hovertemp)
+summed_rank_attend.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
+summed_rank_attend.update_yaxes(range=[.6,1.2], title_text = 'Percent Capacity per Game')
+summed_rank_attend.update_layout(title_text='Capacity by Matchup Weight')
+summed_rank_attend.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=.2,
+        y=1.2,
+        sizex=50,
+        sizey=.6,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+summed_rank_attend.update_layout(template="plotly_white")
 
 # Networks Graph
 y0= MERGED[MERGED['Network']=='CBS']['added_rank']
@@ -260,7 +287,7 @@ ranks_views.add_layout_image(
         yref="y",
         x=0,
         y=15000000,
-        sizex=30,
+        sizex=28,
         sizey=15000000,
         sizing = 'stretch',
         opacity=0.1,
@@ -520,7 +547,8 @@ def render_content(tab):
                     # graphs with average stadium capacity and viewership per team
                     dbc.Row([
                         dbc.Col([
-                            draw_graph(id='summed_ranks',figure=summed_ranks)  
+                            draw_graph(id='summed_ranks',figure=summed_ranks), 
+                            draw_graph(id='summed_rank_attend', figure=summed_rank_attend) 
                         ], width=4),
                         dbc.Col([
                             draw_graph(id='networks',figure=networks) 
