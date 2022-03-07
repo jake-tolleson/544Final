@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 #from layouts import Page1Layout, Page2Layout
 
+####### PRE DATA FUNCTIONS AND DICTIONARIES ###################################################################
 # Function to create graphs
 def draw_graph(id,*args, **kwargs):
     return html.Div([
@@ -73,7 +74,7 @@ def choose_logo(team):
     return value
     
 
-# Read in files
+############## READ IN DATA #######################################################################################
 # Need pandas version > 1.4 and pyarrow installed
 RATINGS = pd.read_csv('TV_Ratings_onesheet.csv',engine='pyarrow')
 GAMES = pd.read_csv('games_flat_xml_2012-2018.csv',engine='pyarrow')
@@ -87,6 +88,8 @@ MERGED = pd.merge(GAMES,RATINGS,how='inner',on='TeamIDsDate')
 # capacity is a custom dataset
 MERGED = pd.merge(MERGED,CAPACITY,on=['homename','stadium'])
 
+
+################# DATA ENGINEERING/CLEANING ##############################################
 # a KPI we will use is perecent of capacity
 MERGED['Percent_of_Capacity'] = MERGED['attend']/MERGED['Capacity']
 
@@ -129,6 +132,7 @@ MERGED['rank_vis'] = MERGED['rank_vis'].replace({'character(0)':'26'})
 MERGED['rank_vis'] = MERGED['rank_vis'].astype(int)
 MERGED['added_rank'] = MERGED['rank_home'] + MERGED['rank_vis']
 
+# Some variables to help with static graphs
 # define lists of individual rankings and viewers
 ranks = []
 views=[]
@@ -148,8 +152,9 @@ ranks.extend(ranks_vis)
 views.extend(views)
 teams = home + vis
 
+################### STATIC GRAPHS #########################################################
 # Define figures with average stats per team
-# avg viewers graph
+# avg viewers graph - 1st tab
 viewership = px.bar(data_frame=df,x='Team',y='AvgViews')
 viewership.add_hline(df['AvgViews'].mean(),
             line_dash='dot',
@@ -169,7 +174,7 @@ viewership.update_layout(title={
 viewership.update_traces(marker_color='navy')
 viewership.layout.template = 'plotly_white'
 
-# avg attendance graph
+# avg attendance graph-1st tab
 attendance = px.bar(data_frame=df,x='Team',y='Avgattend')
 attendance.add_hline(df['Avgattend'].mean(),
             line_dash='dot',
@@ -189,7 +194,7 @@ attendance.update_layout(title={
         yaxis_title="Percent of Capacity")
 attendance.layout.template = 'plotly_white'
 
-# summed rank graph
+# summed rank graph - 3rd tab
 summed_ranks_data=MERGED['added_rank']
 summed_ranks = go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['VIEWERS'], mode='markers',
                                  marker=dict(color='navy'),
@@ -215,14 +220,12 @@ summed_ranks.add_layout_image(
     # Set templates
 summed_ranks.update_layout(template="plotly_white")
 
-# Figure for summed ranks against percent capacity
+# Figure for summed ranks against percent capacity - 3rd tab
 summed_rank_attend= go.Figure(data=[go.Scatter(x=MERGED['added_rank'], y=MERGED['Percent_of_Capacity'], mode='markers',
                                  marker=dict(color='navy'),
                                  text=summed_ranks_data,
                                  hovertemplate = "<b>Summed Rank of Teams: </b> %{text} <br>")])
                             
-
-#fig.update_traces(hovertemplate=hovertemp)
 summed_rank_attend.update_xaxes(range=[0,51.5], title_text = 'Summed Rank of Teams per Game')
 summed_rank_attend.update_yaxes(range=[.6,1.2], title_text = 'Percent Capacity per Game')
 summed_rank_attend.update_layout(title_text='Capacity by Matchup Weight')
@@ -242,7 +245,7 @@ summed_rank_attend.add_layout_image(
     # Set templates
 summed_rank_attend.update_layout(template="plotly_white")
 
-# Networks Graph
+# Networks Graph and summed ranks - 3rd tab
 y0= MERGED[MERGED['Network']=='CBS']['added_rank']
 y1 = MERGED[MERGED['Network']=='ESPN']['added_rank']
 y3 = MERGED[MERGED['Network']=='ESPN2']['added_rank']
@@ -274,7 +277,7 @@ networks.update_xaxes( title_text = 'Network')
 networks.update_yaxes(title_text = 'Summed Rank')
 networks.update_layout(title_text='Weighted Matchup Distribution by Network')
 
-# Figure for ranks of single teams
+# Figure for ranks of single teams - 3rd tab
 ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
                                  marker=dict(color='navy'),
                                  text=teams,
@@ -299,7 +302,7 @@ ranks_views.update_xaxes( title_text = 'Ranking')
 ranks_views.update_yaxes(title_text = 'Views')
 ranks_views.update_layout(title_text='Viewership by Ranking')
 
-# Figure with ranks against percent capacity
+# Figure with ranks against percent capacity - 3rd tab
 ranks_attend = go.Figure(data=[go.Scatter(x=ranks, y=attend, mode='markers',
                                  marker=dict(color='navy'),
                                  text=teams,
@@ -324,8 +327,7 @@ ranks_attend.update_xaxes( title_text = 'Ranking')
 ranks_attend.update_yaxes(title_text = 'Percent Capacity')
 ranks_attend.update_layout(title_text='Percent Capacity by Ranking')
 
-
-
+########################## OTHER APP PREP ######################################
 # Creating an object for "options" in the dropdown menu.
 team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'Alabama', 'value': 'Alabama'},
