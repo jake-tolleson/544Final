@@ -4,10 +4,12 @@
 
 # Import Modules
 import numpy as np
+# numpy verison=='1.22.2'
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+# pandas version='1.4.1'
 import dash_bootstrap_components as dbc
 import datetime
 from PIL import Image
@@ -79,10 +81,9 @@ def choose_logo(team):
     
 
 ############## READ IN DATA #######################################################################################
-# Need pandas version > 1.4 and pyarrow installed
-RATINGS = pd.read_csv('TV_Ratings_onesheet.csv',engine='pyarrow')
-GAMES = pd.read_csv('games_flat_xml_2012-2018.csv',engine='pyarrow')
-CAPACITY = pd.read_csv('capacity.csv',engine='pyarrow')
+RATINGS = pd.read_csv('TV_Ratings_onesheet.csv')
+GAMES = pd.read_csv('games_flat_xml_2012-2018.csv')
+CAPACITY = pd.read_csv('capacity.csv')
 
 # this attendance value is a typo. 710,004 should be 71,004
 GAMES.loc[GAMES['attend'] > 200000,'attend'] = 71004
