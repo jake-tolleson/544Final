@@ -344,7 +344,8 @@ team_names_dict = [{'label': 'Georgia', 'value': 'Georgia'},
                    {'label': 'Arkansas', 'value': 'Arkansas'},
                    {'label': 'South Carolina', 'value': 'South Carolina'}]
 
-# initialize app
+###################### APP ######################################
+# initialize the app
 app = Dash(suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP],
               meta_tags=[
                   {"name": "viewport", "content": "width=device-width, initial-scale=1"}
@@ -437,7 +438,7 @@ def render_content(tab):
     # layout for 2nd tab, team comparisons
     elif tab == 'tab-2':
         return html.Div([ 
-            # create row of cards with best branded teams
+            # create row of 3 cards with two user input dropdowns
             dbc.Card(
                 dbc.CardBody([
                     dbc.Row([
@@ -498,7 +499,7 @@ def render_content(tab):
         ])
     elif tab == 'tab-3':
         return html.Div([ 
-            # create row of cards with best branded teams
+            # create row of cards with 3 potential factors associated with branding
             dbc.Card(
                 dbc.CardBody([
                     dbc.Row([
@@ -546,7 +547,7 @@ def render_content(tab):
                     ], align='center'), 
                     html.Br(),
                     
-                    # graphs with average stadium capacity and viewership per team
+                    # graphs with average stadium capacity and viewership per team, as well as network graph
                     dbc.Row([
                         dbc.Col([
                             draw_graph(id='summed_ranks',figure=summed_ranks), 
@@ -565,12 +566,16 @@ def render_content(tab):
             )
         ])
 
+# Callbacks
+
+# callback for 1st dropdown, 2 outputs
 @app.callback(
     Output('time-series1','figure'),
     Output('time-series3', 'figure'),
     Input('dropdown1','value')
 )
 def update_graph(team1):
+    # 1st dropdown
     new_df = MERGED.loc[MERGED['Matchup_Full_TeamNames'].str.contains(team1),['date','VIEWERS','Percent_of_Capacity','homename']]
     new_df.sort_values('date',inplace=True)
 
@@ -630,7 +635,7 @@ def update_graph(team1):
     fig3.update_layout(template="plotly_white") 
     return fig1, fig3
 
-
+# callback for 2nd dropdown, 2 outputs
 @app.callback(
     Output('time-series2','figure'),
     Output('time-series4', 'figure'),
