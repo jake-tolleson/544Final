@@ -243,16 +243,16 @@ summed_rank_attend.add_layout_image(
 summed_rank_attend.update_layout(template="plotly_white")
 
 # Networks Graph
-y0= MERGED[MERGED['Network']=='CBS']['added_rank']
-y1 = MERGED[MERGED['Network']=='ESPN']['added_rank']
-y3 = MERGED[MERGED['Network']=='ESPN2']['added_rank']
-y4 = MERGED[MERGED['Network']=='ABC']['added_rank'] 
+y0 = MERGED.loc[MERGED['Network']=='CBS',['added_rank','VIEWERS']]
+y1 = MERGED.loc[MERGED['Network']=='ESPN',['added_rank','VIEWERS']]
+y3 = MERGED.loc[MERGED['Network']=='ESPN2',['added_rank','VIEWERS']]
+y4 = MERGED.loc[MERGED['Network']=='ABC',['added_rank','VIEWERS']]
 
 networks = go.Figure()
-networks.add_trace(go.Box(y=y0, name='CBS', boxpoints='all'))
-networks.add_trace(go.Box(y=y1, name='ESPN', boxpoints='all'))
-networks.add_trace(go.Box(y=y3, name='ESPN2',boxpoints='all'))
-networks.add_trace(go.Box(y=y4, name='ABC',boxpoints='all'))
+networks.add_trace(go.Box(y=y0['added_rank'], name='CBS', boxpoints='all'))
+networks.add_trace(go.Box(y=y1['added_rank'], name='ESPN', boxpoints='all'))
+networks.add_trace(go.Box(y=y3['added_rank'], name='ESPN2',boxpoints='all'))
+networks.add_trace(go.Box(y=y4['added_rank'], name='ABC',boxpoints='all'))
 
 
 networks.add_layout_image(
@@ -273,6 +273,33 @@ networks.update_layout(template="plotly_white")
 networks.update_xaxes( title_text = 'Network')
 networks.update_yaxes(title_text = 'Summed Rank')
 networks.update_layout(title_text='Weighted Matchup Distribution by Network')
+
+# Viewership by network graph
+network_views = go.Figure()
+network_views.add_trace(go.Box(y=y0['VIEWERS'], name='CBS', boxpoints='all'))
+network_views.add_trace(go.Box(y=y1['VIEWERS'], name='ESPN', boxpoints='all'))
+network_views.add_trace(go.Box(y=y3['VIEWERS'], name='ESPN2',boxpoints='all'))
+network_views.add_trace(go.Box(y=y4['VIEWERS'], name='ABC',boxpoints='all'))
+
+
+network_views.add_layout_image(
+    dict(
+        source= Image.open('logos/SEC.png'),
+        xref="x",
+        yref="y",
+        x=0,
+        y=50,
+        sizex=3,
+        sizey=50,
+        sizing = 'stretch',
+        opacity=0.1,
+        layer="below")
+    )
+    # Set templates
+network_views.update_layout(template="plotly_white")
+network_views.update_xaxes( title_text = 'Network')
+network_views.update_yaxes(title_text = 'Number of Views')
+network_views.update_layout(title_text='TV Viewership Distribution by Network')
 
 # Figure for ranks of single teams
 ranks_views = go.Figure(data=[go.Scatter(x=ranks, y=views, mode='markers',
@@ -551,6 +578,7 @@ def render_content(tab):
                             draw_graph(id='summed_rank_attend', figure=summed_rank_attend) 
                         ], width=4),
                         dbc.Col([
+                            draw_graph(id='network_views',figure=network_views),
                             draw_graph(id='networks',figure=networks) 
                         ], width=4),
                         dbc.Col([
